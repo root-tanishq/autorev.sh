@@ -1,5 +1,5 @@
 # autorev.sh  
-The Pythone Script will generate a (.)extensino file with reverse shell codes then you can execute the script on the target [support windows and linux both]
+The Python Script will generate a (.)extension file with reverse shell codes then you can execute the script on the target [support windows and linux both]
 ## Generating linux  
 ```
 python3 autorev.py -i <your-ip> -p <your-port> -o <sh-file-name> -f lin
