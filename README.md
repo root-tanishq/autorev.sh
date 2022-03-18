@@ -1,4 +1,8 @@
 # autorev.sh  
+> The ReadMe is not uptodate according to tool 
+
+> tool is easy 
+ 
 The Python Script will generate a (.)extension file with reverse shell codes then you can execute the script on the target [support windows and linux both]
 ## Generating linux  
 ```
