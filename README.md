@@ -1,7 +1,8 @@
 <div align="center">
-![alt text](https://github.com/root-tanishq/autorev.sh/raw/main/images/autorev_banner.png) 
 
 # Autorev.sh
+  
+![alt text](https://github.com/root-tanishq/autorev.sh/raw/main/images/autorev_banner.png) 
 
 The Python Script will generate a (.) extension file with reverse shell codes then you can execute the script on the target [support windows and linux both]
 
