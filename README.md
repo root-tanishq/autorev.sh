@@ -1,10 +1,10 @@
 ![alt text](https://github.com/root-tanishq/autorev.sh/raw/main/images/autorev_banner.png) 
 
-# autorev.sh
+#                              Autorev.sh
 
 The Python Script will generate a (.) extension file with reverse shell codes then you can execute the script on the target [support windows and linux both]
 
-# Usage
+#                              Usage
 
 ## Generating linux
 
@@ -38,7 +38,7 @@ python3 autorev.sh -i <your-ip> -p <your-port> -o <scf-file-name> -f scf
 
 ![alt text](https://github.com/root-tanishq/autorev.sh/raw/main/images/autorev_scf.png) > All Usage commands will be also generated and print according to the given switches
 
-## HELP Menu
+##                           HELP Menu
 
 ```
 -h,        --help   HELP   show this help message and exit
